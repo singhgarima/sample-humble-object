@@ -2,13 +2,20 @@ using System.Text.Json;
 
 namespace SampleHumbleObject.service;
 
-public class JokeService(HttpClient client) : IJokeService
+public class JokeService : IJokeService
 {
     public const string JokesApiUrl = "https://icanhazdadjoke.com/";
+    private readonly HttpClient _client;
+
+    public JokeService(HttpClient client)
+    {
+        _client = client;
+        _client.DefaultRequestHeaders.Add("Accept", "application/json");
+    }
 
     public async Task<string?> GetRandomJoke()
     {
-        var response = client.GetAsync(JokesApiUrl);
+        var response = _client.GetAsync(JokesApiUrl);
         var message = response.Result;
 
         if (!message.IsSuccessStatusCode) return null;
