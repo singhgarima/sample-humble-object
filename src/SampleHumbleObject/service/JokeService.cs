@@ -16,8 +16,18 @@ public class JokeService : IJokeService
     public async Task<string?> GetRandomJoke()
     {
         var response = _client.GetAsync(JokesApiUrl);
-        var message = response.Result;
+        return await GetJokeFromResponse(response.Result);
+    }
 
+
+    public async Task<string?> GetAJoke(string id)
+    {
+        var response = _client.GetAsync(JokesApiUrl + "/j/" + id);
+        return await GetJokeFromResponse(response.Result);
+    }
+
+    private static async Task<string?> GetJokeFromResponse(HttpResponseMessage message)
+    {
         if (!message.IsSuccessStatusCode) return null;
 
         var data = await message.Content.ReadAsStringAsync();
@@ -29,4 +39,5 @@ public class JokeService : IJokeService
 public interface IJokeService
 {
     public Task<string?> GetRandomJoke();
+    public Task<string?> GetAJoke(string id);
 }

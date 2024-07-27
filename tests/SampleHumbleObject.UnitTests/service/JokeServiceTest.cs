@@ -21,7 +21,7 @@ public class JokeServiceTest
 
     private static readonly HttpResponseMessage FailedHttpResponseMessage = new()
     {
-        StatusCode = HttpStatusCode.InternalServerError
+        StatusCode = HttpStatusCode.NotFound
     };
 
     private readonly JokeService _jokeService;
@@ -67,6 +67,41 @@ public class JokeServiceTest
 
         // act
         var joke = await _jokeService.GetRandomJoke();
+
+        // assert
+        Assert.Null(joke);
+    }
+
+
+    [Fact]
+    public async Task GetAJoke_GetsAJokeSuccessfully()
+    {
+        // arrange
+        _mockHttpMessageHandler.Protected()
+            .Setup<Task<HttpResponseMessage>>("SendAsync",
+                ItExpr.IsAny<HttpRequestMessage>(),
+                ItExpr.IsAny<CancellationToken>())
+            .ReturnsAsync(SuccessfulHttpResponseMessage);
+
+        // act
+        var joke = await _jokeService.GetAJoke("a-specific-id");
+
+        // assert
+        Assert.Equal("What kind of magic do cows believe in? MOODOO.", joke);
+    }
+
+    [Fact]
+    public async Task GetAJoke_FailsWhenRemoteServerFails()
+    {
+        // arrange
+        _mockHttpMessageHandler.Protected()
+            .Setup<Task<HttpResponseMessage>>("SendAsync",
+                ItExpr.IsAny<HttpRequestMessage>(),
+                ItExpr.IsAny<CancellationToken>())
+            .ReturnsAsync(FailedHttpResponseMessage);
+
+        // act
+        var joke = await _jokeService.GetAJoke("invalid-id");
 
         // assert
         Assert.Null(joke);
