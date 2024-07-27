@@ -6,56 +6,56 @@ using Spectre.Console.Testing;
 
 namespace SampleHumbleObject.UnitTests.command;
 
-public class GetCommandTest
+public class SearchCommandTest
 {
     private readonly IRemainingArguments _remainingArgs = Mock.Of<IRemainingArguments>();
 
     [Fact]
-    public void Execute_ShouldReturnJokeForTheJokeId()
+    public void Execute_ShouldReturnJokesForTheSearchTerm()
     {
         // arrange
-        var jokeId = "a-very-specific-id";
+        var serachTerm = "a search term";
 
         var jokeService = new Mock<IJokeService>();
-        const string aRandomJoke = "What do I look like? A JOKE MACHINE!?";
-        jokeService.Setup(x => x.GetAJoke(It.Is<string>(i => i == jokeId)))
-            .ReturnsAsync(aRandomJoke);
+        var jokes = new List<string> { "joke1", "joke2" };
+        jokeService.Setup(x => x.SearchJokes(It.Is<string>(i => i == serachTerm)))
+            .ReturnsAsync(jokes);
 
         var console = new TestConsole().EmitAnsiSequences();
 
         var context = new CommandContext([], _remainingArgs, "", null);
-        var command = new GetCommand(console, jokeService.Object);
+        var command = new SearchCommand(console, jokeService.Object);
 
         // act
-        var result = command.Execute(context, new GetCommand.Settings
+        var result = command.Execute(context, new SearchCommand.Settings
         {
-            Id = jokeId
+            Term = serachTerm
         });
 
         // arrange
-        Assert.Contains(aRandomJoke, console.Output);
         Assert.Equal(0, result);
+        foreach (var joke in jokes) Assert.Contains(joke, console.Output);
     }
 
     [Fact]
     public void Execute_ShouldPrintAnErrorWhenNoJokeFound()
     {
         // arrange
-        var jokeId = "a-invalid-id";
+        var serachTerm = "a invalid search term";
 
         var jokeService = new Mock<IJokeService>();
-        jokeService.Setup(x => x.GetAJoke(It.Is<string>(i => i == jokeId)))
-            .ReturnsAsync((string?)null);
+        jokeService.Setup(x => x.SearchJokes(It.Is<string>(i => i == serachTerm)))
+            .ReturnsAsync([]);
 
         var console = new TestConsole();
 
         var context = new CommandContext([], _remainingArgs, "", null);
-        var command = new GetCommand(console, jokeService.Object);
+        var command = new SearchCommand(console, jokeService.Object);
 
         // act
-        var result = command.Execute(context, new GetCommand.Settings
+        var result = command.Execute(context, new SearchCommand.Settings
         {
-            Id = jokeId
+            Term = serachTerm
         });
 
         // arrange

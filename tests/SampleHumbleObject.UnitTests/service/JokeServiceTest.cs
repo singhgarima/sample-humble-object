@@ -106,4 +106,77 @@ public class JokeServiceTest
         // assert
         Assert.Null(joke);
     }
+
+    [Fact]
+    public async Task SearchJokes_GetsAJokeSuccessfully()
+    {
+        // arrange
+        var responseMessage = new HttpResponseMessage
+        {
+            StatusCode = HttpStatusCode.OK,
+            Content = new StringContent("""
+                                        {
+                                            "current_page": 1,
+                                            "limit": 5,
+                                            "next_page": 2,
+                                            "previous_page": 1,
+                                            "results": [
+                                              {
+                                                "id": "M7wPC5wPKBd",
+                                                "joke": "Joke 1."
+                                              },
+                                              {
+                                                "id": "MRZ0LJtHQCd",
+                                                "joke": "Joke 2."
+                                              },
+                                              {
+                                                "id": "M7wPC5w2KBd",
+                                                "joke": "Joke 3."
+                                              },
+                                              {
+                                                "id": "MRZ0LJ1HQCd",
+                                                "joke": "Joke 4."
+                                              },
+                                              {
+                                                "id": "M7wPCawPKBd",
+                                                "joke": "Joke 5."
+                                              }
+                                            ]
+                                        }
+                                        """)
+        };
+        _mockHttpMessageHandler.Protected()
+            .Setup<Task<HttpResponseMessage>>("SendAsync",
+                ItExpr.IsAny<HttpRequestMessage>(),
+                ItExpr.IsAny<CancellationToken>())
+            .ReturnsAsync(responseMessage);
+
+        // act
+        var jokes = await _jokeService.SearchJokes("a-term");
+
+        // assert
+        Assert.Equal(5, jokes.Count);
+        Assert.Equal("Joke 1.", jokes[0]);
+        Assert.Equal("Joke 2.", jokes[1]);
+        Assert.Equal("Joke 3.", jokes[2]);
+        Assert.Equal("Joke 4.", jokes[3]);
+        Assert.Equal("Joke 5.", jokes[4]);
+    }
+
+    [Fact]
+    public async Task SearchJokes_FailsWhenRemoteServerFails()
+    {
+        // arrange
+        _mockHttpMessageHandler.Protected()
+            .Setup<Task<HttpResponseMessage>>("SendAsync",
+                ItExpr.IsAny<HttpRequestMessage>(),
+                ItExpr.IsAny<CancellationToken>())
+            .ReturnsAsync(FailedHttpResponseMessage);
+
+        // act
+        var jokes = await _jokeService.SearchJokes("invalid-id");
+
+        // assert
+        Assert.Equal(0, jokes.Count);
+    }
 }

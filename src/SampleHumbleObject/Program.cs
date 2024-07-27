@@ -14,5 +14,6 @@ app.Configure(config =>
 {
     config.SetApplicationVersion("1.0.0");
     config.AddCommand<GetCommand>("get");
+    config.AddCommand<SearchCommand>("search");
 });
 app.Run(args);
