@@ -29,14 +29,10 @@ public class TranslateService : ITranslateService
     private static async Task<string?> GetTranslationFromResponse(Task<HttpResponseMessage> response)
     {
         var message = response.Result;
-        if (!message.IsSuccessStatusCode)
-        {
-            return null;
-        }
+        if (!message.IsSuccessStatusCode) return null;
 
         var data = await message.Content.ReadAsStringAsync();
         var jsonDocument = JsonDocument.Parse(data);
-        jsonDocument.RootElement.GetProperty("contents").GetProperty("translated").GetString();
         return jsonDocument.RootElement.GetProperty("contents").GetProperty("translated").GetString();
     }
 }
