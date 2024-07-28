@@ -1,12 +1,12 @@
 using Moq;
-using SampleHumbleObject.command;
+using SampleHumbleObject.command.joke;
 using SampleHumbleObject.service;
 using Spectre.Console.Cli;
 using Spectre.Console.Testing;
 
-namespace SampleHumbleObject.UnitTests.command;
+namespace SampleHumbleObject.UnitTests.command.joke;
 
-public class JokeCommandTest
+public class RandomCommandTest
 {
     private readonly IRemainingArguments _remainingArgs = Mock.Of<IRemainingArguments>();
 
@@ -22,7 +22,7 @@ public class JokeCommandTest
         var console = new TestConsole().EmitAnsiSequences();
 
         var context = new CommandContext([], _remainingArgs, "", null);
-        var command = new JokeCommand(console, jokeService.Object);
+        var command = new RandomCommand(console, jokeService.Object);
 
         // act
         var result = command.Execute(context);
@@ -43,7 +43,7 @@ public class JokeCommandTest
         var console = new TestConsole();
 
         var context = new CommandContext([], _remainingArgs, "", null);
-        var command = new JokeCommand(console, jokeService.Object);
+        var command = new RandomCommand(console, jokeService.Object);
 
         // act
         var result = command.Execute(context);

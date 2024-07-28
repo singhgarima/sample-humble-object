@@ -3,7 +3,7 @@ using SampleHumbleObject.service;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
-namespace SampleHumbleObject.command;
+namespace SampleHumbleObject.command.joke;
 
 public class SearchCommand(IAnsiConsole console, IJokeService jokeService) : Command<SearchCommand.Settings>
 {

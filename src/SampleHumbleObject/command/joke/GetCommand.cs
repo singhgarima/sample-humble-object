@@ -3,13 +3,12 @@ using SampleHumbleObject.service;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
-namespace SampleHumbleObject.command;
+namespace SampleHumbleObject.command.joke;
 
 public class GetCommand(IAnsiConsole console, IJokeService jokeService) : Command<GetCommand.Settings>
 {
     public override int Execute(CommandContext context, Settings settings)
     {
-
         var joke = jokeService.GetAJoke(settings.Id).Result;
 
         if (string.IsNullOrWhiteSpace(joke))

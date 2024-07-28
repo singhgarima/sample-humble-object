@@ -1,10 +1,10 @@
 using Moq;
-using SampleHumbleObject.command;
+using SampleHumbleObject.command.joke;
 using SampleHumbleObject.service;
 using Spectre.Console.Cli;
 using Spectre.Console.Testing;
 
-namespace SampleHumbleObject.UnitTests.command;
+namespace SampleHumbleObject.UnitTests.command.joke;
 
 public class SearchCommandTest
 {

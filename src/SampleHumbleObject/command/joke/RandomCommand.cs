@@ -2,9 +2,9 @@ using SampleHumbleObject.service;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
-namespace SampleHumbleObject.command;
+namespace SampleHumbleObject.command.joke;
 
-public class JokeCommand(IAnsiConsole console, IJokeService jokeService) : Command
+public class RandomCommand(IAnsiConsole console, IJokeService jokeService) : Command
 {
     public override int Execute(CommandContext context)
     {
