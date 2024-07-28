@@ -177,6 +177,6 @@ public class JokeServiceTest
         var jokes = await _jokeService.SearchJokes("invalid-id");
 
         // assert
-        Assert.Equal(0, jokes.Count);
+        Assert.Empty(jokes);
     }
 }
